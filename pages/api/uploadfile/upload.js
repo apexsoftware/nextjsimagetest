@@ -21,7 +21,7 @@ export default async (req, res) => {
             if (err) return reject(err)
             console.log(files.file[0]);
             
-			 var newPath = `public/uploads/profiles/${files.file[0].originalFilename}`;
+			 var newPath = `/public/uploads/profiles/${files.file[0].originalFilename}`;
 			 var oldPath = files.file[0].filepath;
 			  mv(oldPath, newPath, function(err) {
 				res.status(200).json({ oldPath, newPath, files,err})
