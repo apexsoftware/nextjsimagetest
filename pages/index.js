@@ -3,20 +3,39 @@ import { useEffect, useRef, useState } from "react";
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { fetchData, postData } from "/lib/clientFunctions";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
 	    const [image, setImage] = useState(null);
 	  const [createObjectURL, setCreateObjectURL] = useState(null);
+	  
     const uploadToClient = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      const i = event.target.files[0];
+		if (event.target.files && event.target.files[0]) {
+		  const i = event.target.files[0];
 
-      setImage(i);
-      setCreateObjectURL(URL.createObjectURL(i));
-    }
-  };
+		  setImage(i);
+		  setCreateObjectURL(URL.createObjectURL(i));
+		}
+	  };
+	
+	  const uploadToServer = async (event) => {        
+		const body = new FormData();
+		// console.log("file", image)
+		body.append("file", image);    
+
+		await postData("/api/uploadfile/upload", body)
+		  .then((status) =>
+			console.log((status))
+		  )
+		  .catch((err) => {
+			console.log(err);
+			toast.error(`Something Went Wrong ${err.message}`);
+		  });
+		};
+	  
+	  
   return (
     <>
       <Head>
@@ -35,6 +54,16 @@ export default function Home() {
 		  		 <img src={createObjectURL}  width="100"/>
         <h4>Select Image</h4>
         <input type="file" name="myImage" onChange={uploadToClient} />
+		<button
+          className="btn btn-primary"
+          type="submit"
+          onClick={uploadToServer}
+        >
+          Send to server
+        </button>
+		
+		
+		
 		
             <a
               href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
